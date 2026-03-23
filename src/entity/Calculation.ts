@@ -6,14 +6,17 @@ export class Calculation {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ type: "float" })
+    @Column({ type: "float", nullable: true })
     operand1: number;
 
-    @Column({ type: "varchar", length: 10 })
+    @Column({ type: "varchar", length: 255, nullable: true })
     operator: string;
 
-    @Column({ type: "float" })
+    @Column({ type: "float", nullable: true })
     operand2: number;
+
+    @Column({ type: "text", nullable: true })
+    full_expression: string;
 
     @Column({ type: "float" })
     result: number;

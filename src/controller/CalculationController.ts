@@ -37,6 +37,22 @@ export class CalculationController {
         }
     }
 
+    static async evaluate(req: AuthRequest, res: Response) {
+        try {
+            const userId = req.user.id;
+            const { expression } = req.body;
+
+            if (!expression) {
+                return res.status(400).json({ error: "Missing required field: expression" });
+            }
+
+            const result = await CalculationService.evaluateExpression(userId, String(expression));
+            res.status(200).json(result);
+        } catch (error: any) {
+            res.status(400).json({ error: error.message });
+        }
+    }
+
     static async getHistory(req: AuthRequest, res: Response) {
         try {
             const userId = req.user.id;

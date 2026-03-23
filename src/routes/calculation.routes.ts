@@ -7,6 +7,7 @@ const router = Router();
 // Secure these routes using the custom authenticateToken middleware!
 router.get("/", authenticateToken, CalculationController.getAllCalculations);
 router.post("/", authenticateToken, CalculationController.calculate);
+router.post("/evaluate", authenticateToken, CalculationController.evaluate);
 router.get("/history", authenticateToken, CalculationController.getHistory);
 router.get("/:id", authenticateToken, CalculationController.getCalculationById);
 
