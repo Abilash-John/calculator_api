@@ -1,3 +1,4 @@
+import { evaluate } from "mathjs";
 import { AppDataSource } from "../config/data-source";
 import { User } from "../entity/User";
 import { Calculation } from "../entity/Calculation";
@@ -19,6 +20,32 @@ export class CalculationService {
         });
         if (!calculation) throw new Error("Calculation not found");
         return calculation;
+    }
+
+    static async evaluateExpression(userId: number, expression: string) {
+        const userRepository = AppDataSource.getRepository(User);
+        const calculationRepository = AppDataSource.getRepository(Calculation);
+
+        const user = await userRepository.findOneBy({ id: userId });
+        if (!user) {
+            throw new Error("User not found");
+        }
+
+        let result: number;
+        try {
+            result = evaluate(expression);
+        } catch (err) {
+            throw new Error("Invalid expression");
+        }
+
+        const calc = new Calculation();
+        calc.full_expression = expression;
+        calc.result = result;
+        calc.user = user;
+
+        await calculationRepository.save(calc);
+
+        return calc;
     }
 
     static async performCalculation(userId: number, operand1: number, operator: string, operand2: number) {
@@ -53,6 +80,7 @@ export class CalculationService {
         calc.operand1 = operand1;
         calc.operator = operator;
         calc.operand2 = operand2;
+        calc.full_expression = `${operand1} ${operator} ${operand2}`;
         calc.result = result;
         calc.user = user;
 
